@@ -13,8 +13,8 @@ import {
   ItemData,
   ItemEntry,
   ItemPosition,
-} from "./type";
-import { ListContext } from "./context";
+} from "../../Lib/type";
+import { ListContext } from "../../Lib/context";
 import invariant from "tiny-invariant";
 import { combine } from "@atlaskit/pragmatic-drag-and-drop/combine";
 import {
@@ -35,52 +35,19 @@ import DropdownMenu, {
 } from "@atlaskit/dropdown-menu";
 import { DragHandleButton } from "@atlaskit/pragmatic-drag-and-drop-react-accessibility/drag-handle-button";
 import mergeRefs from "@atlaskit/ds-lib/merge-refs";
-import Avatar from "@atlaskit/avatar";
 import Lozenge from "@atlaskit/lozenge";
 import { DropIndicator } from "@atlaskit/pragmatic-drag-and-drop-react-drop-indicator/box";
 import ReactDOM from "react-dom";
 import Image from "next/image";
 import Badge from "@atlaskit/badge";
+import {
+  listItemContainerStyles,
+  listItemPreviewStyles,
+  listItemStyles,
+} from "./styles";
 
 const itemKey = Symbol("item");
 const draggingState: DraggableState = { type: "dragging" };
-
-const itemLabelStyles = xcss({
-  flexGrow: 1,
-  whiteSpace: "nowrap",
-  textOverflow: "ellipsis",
-  overflow: "hidden",
-  color: "color.text.accent.blue",
-});
-
-const listItemPreviewStyles = xcss({
-  paddingBlock: "space.050",
-  paddingInline: "space.100",
-  borderRadius: "border.radius.100",
-  backgroundColor: "elevation.surface.overlay",
-  maxWidth: "360px",
-  whiteSpace: "nowrap",
-  overflow: "hidden",
-  textOverflow: "ellipsis",
-  color: "color.text.accent.blue",
-});
-
-const listItemContainerStyles = xcss({
-  position: "relative",
-  backgroundColor: "elevation.surface",
-  borderWidth: "border.width.0",
-  borderBottomWidth: token("border.width", "1px"),
-  borderStyle: "solid",
-  borderColor: "color.border",
-  ":last-of-type": {
-    borderWidth: "border.width.0",
-  },
-});
-
-const listItemStyles = xcss({
-  position: "relative",
-  padding: "space.100",
-});
 
 const listItemDisabledStyles = xcss({ opacity: 0.4 });
 
@@ -326,8 +293,6 @@ export function ListItem({
           </DropdownMenu>
 
           <Inline alignBlock="center" space="space.100">
-            {/* <Box xcss={itemLabelStyles}>{item.label}</Box> */}
-            {/* <Avatar size="small" src={item.avatar} /> */}
             {item.avatar && (
               <Image
                 src={item.avatar}
