@@ -1,5 +1,7 @@
 import { createContext } from "react"
-import { TreeContextValue } from "./types"
+import { DependencyContextType, TreeContextValue } from "./types"
+import { DropIndicator } from "@atlaskit/pragmatic-drag-and-drop-react-drop-indicator/tree-item"
+import { attachInstruction, extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item"
 
 export const TreeContext = createContext<TreeContextValue>({
   dispatch: () => {},
@@ -9,3 +11,10 @@ export const TreeContext = createContext<TreeContextValue>({
   getPathToItem: () => [],
   registerTreeItem: () => {}
 })
+
+export const DependencyContext = createContext<DependencyContextType>({
+  DropIndicator: DropIndicator,
+  attachInstruction: attachInstruction,
+  extractInstruction: extractInstruction
+})
+

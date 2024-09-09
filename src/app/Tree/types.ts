@@ -1,3 +1,6 @@
+import { attachInstruction, extractInstruction } from "@atlaskit/pragmatic-drag-and-drop-hitbox/tree-item"
+import { DropIndicator } from "./functions"
+
 export type Instruction =
   | {
       type: "reorder-above"
@@ -5,7 +8,7 @@ export type Instruction =
       indentPerLevel: number
     }
   | {
-      type: "reoder-below"
+      type: "reorder-below"
       currentLevel: number
       indentPerLevel: number
     }
@@ -69,5 +72,20 @@ export type TreeContextValue = {
 
 export type TreeState = {
   lastAction: TreeAction | null
-  data: TreeItem
+  data: TreeItem[]
 }
+
+export type CleanupFn = () => void
+
+export type ItemMode = "standard" | "expanded" | "last-in-group"
+
+export type DependencyContextType = {
+  DropIndicator: typeof DropIndicator
+  attachInstruction: typeof attachInstruction
+  extractInstruction: typeof extractInstruction
+}
+
+export type DropIndicatorProps = {
+  instruction: Instruction
+}
+

@@ -1,9 +1,19 @@
-import { useCallback, useMemo, useReducer } from "react"
+"use client"
+
+import { useCallback, useMemo, useReducer, useRef, useState } from "react"
 import { TreeContext } from "./context"
-import { TreeContextValue } from "./types"
+import { ItemMode, TreeContextValue } from "./types"
+import memoizeOne from "memoize-one"
+import { createTreeItemRegistry, getInitialTreeState, tree, treeStateReducer } from "./functions"
+import { type TreeItem as TreeItemType } from "./types"
+import invariant from "tiny-invariant"
+import TreeItem from "./TreeItem"
 
 export default function TreeComponent() {
-  const [updateState, setUpdateState] = useReducer(treeStateReducer, null, getnitialState)
+  const [state, updateState] = useReducer(treeStateReducer, null, getInitialTreeState)
+  const { data, lastAction } = state
+  let lastStateRef = useRef<TreeItemType[]>(data)
+  const [{ registry, registerTreeItem }] = useState(createTreeItemRegistry)
 
   const getChildrenOfItem = useCallback((itemId: string) => {
     const data = lastStateRef.current
@@ -14,6 +24,35 @@ export default function TreeComponent() {
     const item = tree.find(data, itemId)
     invariant(item)
     return item.children
+  }, [])
+
+  const getMoveTargets = useCallback(({ itemId }: { itemId: string }) => {
+    const data = lastStateRef.current
+
+    const targets = []
+
+    const searchStack = Array.from(data)
+    while (searchStack.length > 0) {
+      const node = searchStack.pop()
+
+      if (!node) {
+        continue
+      }
+
+      if (node.id === itemId) {
+        continue
+      }
+
+      if (node.isDraft) {
+        continue
+      }
+
+      targets.push(node)
+
+      node.children.forEach((childNode) => searchStack.push(childNode))
+    }
+
+    return targets
   }, [])
 
   const context = useMemo<TreeContextValue>(
@@ -30,5 +69,25 @@ export default function TreeComponent() {
     [getMoveTargets, getChildrenOfItem, registerTreeItem]
   )
 
-  return <TreeContext.Provider value={context}></TreeContext.Provider>
+  return (
+    <TreeContext.Provider value={context}>
+      <div style={{ display: "block", justifyContent: "center", padding: 24 }}>
+        {data.map((item, index, array) => {
+          const type: ItemMode = (() => {
+            if (item.children.length && item.isOpen) {
+              return "expanded"
+            }
+
+            if (index === array.length - 1) {
+              return "last-in-group"
+            }
+
+            return "standard"
+          })()
+          return <TreeItem item={item} level={0} key={item.id} mode={type} index={index} />
+        })}
+      </div>
+    </TreeContext.Provider>
+  )
 }
+
